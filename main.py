@@ -1,4 +1,4 @@
-#ΠΠ ΠΠ’Π•ΠΆ ΠΠΆ Π“ΠΠΆΠ!!!!!!!!!!
+#Χεγξ χεγξ!?
 from tkinter import *
 import random
 from tkinter import messagebox as mb
