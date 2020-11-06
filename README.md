@@ -1,0 +1,2 @@
+# NextgenGame
+Python training project
