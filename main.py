@@ -1,26 +1,14 @@
-#ВНЁС ИЗМЕНЕНИЯ
-#Ну давай еще что то на анг
-#Напримерм
 from tkinter import *
 import random
 from tkinter import messagebox as mb
 #!/usr/bin/env python
-# -- coding: utf-8 --
+# - coding: utf-8 -
 
 root = Tk()
 root.title("NextgenTetris")
 
-#newVariable = IntVar(root)
-#Мне не понравилась эта переменная,хочу другую
-myNewCoolVariable = IntVar(root)
-
 mainFrame = Frame( root, bd = 15) 
 mainFrame.pack( expand=True, fill='both' )
-
-mainmenu = Menu(root)
-root.config(menu=mainmenu)
-mainmenu.add_command(label='Menu')
-mainmenu.add_command(label='Restart')
 
 menuFr = Frame( mainFrame, bd = 0)
 menuFr.pack( expand=True, fill='both' , side='top' )
@@ -29,7 +17,16 @@ fieldFr = Frame( mainFrame, bd = 0)
 fieldFr.pack( expand=True, fill='both')
 
 colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff"]
-fieldColorsCode = [[0, 0, 0], [0, 0, 0], [0, 0, 0]]
+
+
+rowscolumns = 3
+fieldColorsCode = []
+def fieldColorsCodefill():
+    for i in range(rowscolumns):
+        fieldColorsCode.append([])
+        for j in range(rowscolumns):
+            fieldColorsCode[i].append(0)
+fieldColorsCodefill()
 fieldOfBtns = []
 
 
@@ -41,57 +38,78 @@ startX.set(15)
 startY.set(70)
 btnSize.set(80)
 
+rounds = 1
+
+showRounds = Label(menuFr,text=f'Rounds:{rounds}',font=('David',12),bg='#DDD')
+showRounds.pack(anchor='ne')
 
 def fieldClick(event):
-    for i in range(3):
-        for j in range(3):    
+    for i in range(rowscolumns):
+        for j in range(rowscolumns):    
             if event.widget == fieldOfBtns[i][j]:
                 currCode = fieldColorsCode[i][j]
-                currCode += 1
+                currCode += 1                
                 if currCode == len(colors): currCode = 0
                 fieldColorsCode[i][j] = currCode
                 event.widget.config( bg = colors[ currCode ] )
     check = True
     sample = fieldColorsCode[0][0]
-    for i in range(3):
-        for j in range(3):
-           if  fieldColorsCode[i][j] != sample: check = False
+    for i in range(rowscolumns):
+        
+        for j in range(rowscolumns):
+            if  fieldColorsCode[i][j] != sample: check = False
     
     if check:
+        global rounds
+        rounds += 1
         newField()
-            
+
+
 def makefield():
-    for i in range(3):
+    
+    infoTxt.pack( padx=0, pady=0)
+    startBtn.forget()
+    levelsBtn.forget()
+    for i in range(rowscolumns):
         fieldOfBtns.append([])
         fieldFr.rowconfigure(i, weight=1, minsize = btnSize.get())
-        for j in range(3):
-            fieldFr.columnconfigure(j, weight=1,  minsize = btnSize.get())
+        for j in range(rowscolumns):
+            fieldFr.columnconfigure(j, weight=1,  minsize = btnSize.get())  
             
             colorCode = random.randint(0, len(colors) - 1)
             fieldColorsCode[i][j] = colorCode
             btn = Button( fieldFr, bg = colors[ colorCode ])
             
-            btn.grid( row=i, column=j, sticky='nsew')
+            btn.grid( row=i, column=j, sticky='nsew')  
             
             btn.bind('<Button-1>',fieldClick)
             fieldOfBtns[i].append( btn )
-makefield()
 
 def newField():
     infoTxt.config( text = "WOW!!! YOU WIN!" )
     answ = mb.askokcancel('YOU WIN!','Start new round?')
     if answ:
+        btnsDestroy()
         fieldColorsCode.clear()
-        for i in range(3):
-            fieldColorsCode.append([])
-            for j in range(3):
-                fieldColorsCode[i].append(0)
+        global rowscolumns
+        rowscolumns = 4
+        fieldColorsCodefill()
         fieldOfBtns.clear()
-        #makefield()    
+        makefield()   
+        showRounds['text'] = f'Rounds:{rounds}'
+        infoTxt['text'] = 'All cells must be the same color'
+        
+def btnsDestroy():
+    for i in range(rowscolumns):   
+        for j in range(rowscolumns): 
+            fieldOfBtns[i][j].destroy()
+        
 
 
-
-
+startBtn = Button(menuFr,text='start',justify= CENTER,command = makefield,height=1,width=10)
+startBtn.pack()
+levelsBtn = Button(menuFr,text='levels',justify= CENTER,height=1,width=10)
+levelsBtn.pack()
 
 infoTxt = Label(
     menuFr,
@@ -101,6 +119,5 @@ infoTxt = Label(
     font = ( 'Arial', 12 )
 )
 
-infoTxt.pack( padx=0, pady=0)
 
 root.mainloop()
