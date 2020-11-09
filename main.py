@@ -1,4 +1,6 @@
-#Чего чего!?
+#ВНЁС ИЗМЕНЕНИЯ
+#Ну давай еще что то на анг
+#Напримерм
 from tkinter import *
 import random
 from tkinter import messagebox as mb
@@ -8,6 +10,7 @@ from tkinter import messagebox as mb
 root = Tk()
 root.title("NextgenTetris")
 
+newVariable = IntVar(root)
 mainFrame = Frame( root, bd = 15) 
 mainFrame.pack( expand=True, fill='both' )
 
