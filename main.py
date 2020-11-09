@@ -10,7 +10,10 @@ from tkinter import messagebox as mb
 root = Tk()
 root.title("NextgenTetris")
 
-newVariable = IntVar(root)
+#newVariable = IntVar(root)
+#Мне не понравилась эта переменная,хочу другую
+myNewCoolVariable = IntVar(root)
+
 mainFrame = Frame( root, bd = 15) 
 mainFrame.pack( expand=True, fill='both' )
 
