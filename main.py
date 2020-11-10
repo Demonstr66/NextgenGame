@@ -6,6 +6,7 @@ from tkinter import messagebox as mb
 
 root = Tk()
 root.title("NextgenTetris")
+root.resizable('False','False')
 
 mainFrame = Frame( root, bd = 15) 
 mainFrame.pack( expand=True, fill='both' )
@@ -41,7 +42,6 @@ btnSize.set(80)
 rounds = 1
 
 showRounds = Label(menuFr,text=f'Rounds:{rounds}',font=('David',12),bg='#DDD')
-showRounds.pack(anchor='ne')
 
 def fieldClick(event):
     for i in range(rowscolumns):
@@ -60,14 +60,13 @@ def fieldClick(event):
             if  fieldColorsCode[i][j] != sample: check = False
     
     if check:
-        global rounds
-        rounds += 1
         newField()
 
 
-def makefield():
-    
+def makefield(): 
+    showRounds.pack(anchor='ne')
     infoTxt.pack( padx=0, pady=0)
+    welcomelbl.forget()
     startBtn.forget()
     levelsBtn.forget()
     for i in range(rowscolumns):
@@ -89,6 +88,8 @@ def newField():
     infoTxt.config( text = "WOW!!! YOU WIN!" )
     answ = mb.askokcancel('YOU WIN!','Start new round?')
     if answ:
+        global rounds
+        rounds += 1        
         btnsDestroy()
         fieldColorsCode.clear()
         global rowscolumns
@@ -104,12 +105,13 @@ def btnsDestroy():
         for j in range(rowscolumns): 
             fieldOfBtns[i][j].destroy()
         
-
-
-startBtn = Button(menuFr,text='start',justify= CENTER,command = makefield,height=1,width=10)
+welcomelbl = Label(menuFr, text='Welcome to Nextgen Game!', justify=CENTER,font=('Comic Sans MS', 14))
+welcomelbl.pack()
+startBtn = Button(menuFr,text='start',justify= CENTER,command = makefield,height=1,width=10, bg = 'darkblue', fg='white', font=('Comic Sans MS', 14))
 startBtn.pack()
-levelsBtn = Button(menuFr,text='levels',justify= CENTER,height=1,width=10)
+levelsBtn = Button(menuFr,text='levels',justify= CENTER,height=1,width=10,bg = 'darkblue', fg='white', font=('Comic Sans MS', 14))
 levelsBtn.pack()
+
 
 infoTxt = Label(
     menuFr,
