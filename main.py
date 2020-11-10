@@ -5,17 +5,10 @@ from tkinter import messagebox as mb
 root = Tk()
 root.title("NextgenTetris")
 
-startX = IntVar(root)
-startY = IntVar(root)
-btnSize = IntVar(root)
-
-startX.set(15)
-startY.set(70)
-
 btnSize = 80
 currRound = 1
-row = 2
-col = 2
+row = 3
+col = 3
 colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff"]
 status = ""
 
