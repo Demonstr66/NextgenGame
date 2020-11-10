@@ -17,100 +17,126 @@ menuFr.pack( expand=True, fill='both' , side='top' )
 fieldFr = Frame( mainFrame, bd = 0)
 fieldFr.pack( expand=True, fill='both')
 
+
+btnSize = 80
+currRound = 1
+row = 2
+col = 2
 colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff"]
+status = ""
+
+fieldModel = []
+fieldBtns = []
 
 
-rowscolumns = 3
-fieldColorsCode = []
-def fieldColorsCodefill():
-    for i in range(rowscolumns):
-        fieldColorsCode.append([])
-        for j in range(rowscolumns):
-            fieldColorsCode[i].append(0)
-fieldColorsCodefill()
-fieldOfBtns = []
+#---------------RefactoringFunc------
+def startGame():
+    mainMenuFr.forget()
+    gameFr.pack( expand=True, fill='both' )
+
+    newGame( currRound )
+    render()
+
+def newGame( round ):
+    global fieldModel, fieldBtns, status
+
+    fieldModel = modelInit( row, col )
+    fieldBtns = createField( row, col )
+
+    status = "All cells must be the same color"
+def modelInit( r, c ):
+    m = []
+    for i in range( r ):
+        m.append([])
+        for j in range( c ):
+            code = random.randint( 0, len(colors) - 1 )
+            m[i].append( code )
+    return m
+
+def createField( r, c ):
+    field = []
+    for i in range( r ):
+        field.append([])
+        for j in range( c ):
+            btn = Button( fieldFr )
+            btn.grid( row=i, column=j, sticky='nsew')
+            btn.bind( '<Button-1>', fieldOnClick )
+            field[i].append( btn )
+    return field
+
+def check():
+    win = True
+    sample = fieldModel[0][0]
+    for i in range( len(fieldModel) ):
+        for j in range( len(fieldModel[0]) ):
+            if sample != fieldModel[i][j]:
+                win = False
+
+    if (win):
+        status = "WOOW!! YOU WIN!"
+        ask('YOU WIN!', 'Start new round?', newRound, gotoMainMenu)
+def fieldDestroy():
+    for i in range( len(fieldModel) ):
+        for j in range( len(fieldModel[0]) ):
+            fieldBtns[i][j].destroy()
+def newRound():
+    print('New Round')
+
+def gotoMainMenu():
+    fieldDestroy()
+    gameFr.forget()
+    mainMenuFr.pack( expand=True, fill='both' )
+
+def ask(title, text, okAction, cancelAction):
+    if mb.askokcancel(title, text):
+        okAction()
+    else:
+        cancelAction()
+def changeColor( w ):
+    global fieldModel, fieldBtns, status
+
+    for i in range( len(fieldModel) ):
+        for j in range( len(fieldModel[0]) ):
+            if fieldBtns[i][j] == w:
+                fieldModel[i][j] += 1
+            if fieldModel[i][j] == len(colors):
+                fieldModel[i][j] = 0
+    render()
+
+def render():
+    #--------Field--------------------
+    for i in range( len(fieldModel) ):
+        fieldFr.rowconfigure( i, weight=1, minsize = btnSize )
+        for j in range( len(fieldModel[0]) ):
+            fieldFr.columnconfigure( j, weight=1,  minsize = btnSize )
+            fieldBtns[i][j].config(
+                bg = colors[ fieldModel[i][j] ]
+            )
+    #--------InfoText--------------------
+    infoTxt.config( text = status )
+
+#---------------OnClick--------------
+def startOnClick():
+    startGame()
+
+def fieldOnClick(e):
+    changeColor( e.widget )
+    check()
 
 
-startX = IntVar(root)
-startY = IntVar(root)
-btnSize = IntVar(root)
 
-startX.set(15)
-startY.set(70)
-btnSize.set(80)
+gameFr = Frame( root, bd = 15)
+#gameFr.pack( expand=True, fill='both' )
 
-rounds = 1
+menuFr = Frame( gameFr, bd = 0)
+menuFr.pack( expand=True, fill='both' , side='top' )
 
-showRounds = Label(menuFr,text=f'Rounds:{rounds}',font=('David',12),bg='#DDD')
+fieldFr = Frame( gameFr, bd = 0)
+fieldFr.pack( expand=True, fill='both')
 
-def fieldClick(event):
-    for i in range(rowscolumns):
-        for j in range(rowscolumns):    
-            if event.widget == fieldOfBtns[i][j]:
-                currCode = fieldColorsCode[i][j]
-                currCode += 1                
-                if currCode == len(colors): currCode = 0
-                fieldColorsCode[i][j] = currCode
-                event.widget.config( bg = colors[ currCode ] )
-    check = True
-    sample = fieldColorsCode[0][0]
-    for i in range(rowscolumns):
-        
-        for j in range(rowscolumns):
-            if  fieldColorsCode[i][j] != sample: check = False
-    
-    if check:
-        newField()
+mainMenuFr = Frame( root, bd = 15)
+mainMenuFr.pack( expand=True, fill='both' )
 
-
-def makefield(): 
-    showRounds.pack(anchor='ne')
-    infoTxt.pack( padx=0, pady=0)
-    welcomelbl.forget()
-    startBtn.forget()
-    levelsBtn.forget()
-    for i in range(rowscolumns):
-        fieldOfBtns.append([])
-        fieldFr.rowconfigure(i, weight=1, minsize = btnSize.get())
-        for j in range(rowscolumns):
-            fieldFr.columnconfigure(j, weight=1,  minsize = btnSize.get())  
-            
-            colorCode = random.randint(0, len(colors) - 1)
-            fieldColorsCode[i][j] = colorCode
-            btn = Button( fieldFr, bg = colors[ colorCode ])
-            
-            btn.grid( row=i, column=j, sticky='nsew')  
-            
-            btn.bind('<Button-1>',fieldClick)
-            fieldOfBtns[i].append( btn )
-
-def newField():
-    infoTxt.config( text = "WOW!!! YOU WIN!" )
-    answ = mb.askokcancel('YOU WIN!','Start new round?')
-    if answ:
-        global rounds
-        rounds += 1        
-        btnsDestroy()
-        fieldColorsCode.clear()
-        global rowscolumns
-        rowscolumns = 4
-        fieldColorsCodefill()
-        fieldOfBtns.clear()
-        makefield()   
-        showRounds['text'] = f'Rounds:{rounds}'
-        infoTxt['text'] = 'All cells must be the same color'
-        
-def btnsDestroy():
-    for i in range(rowscolumns):   
-        for j in range(rowscolumns): 
-            fieldOfBtns[i][j].destroy()
-        
-welcomelbl = Label(menuFr, text='Welcome to Nextgen Game!', justify=CENTER,font=('Comic Sans MS', 14))
-welcomelbl.pack()
-startBtn = Button(menuFr,text='start',justify= CENTER,command = makefield,height=1,width=10, bg = 'darkblue', fg='white', font=('Comic Sans MS', 14))
-startBtn.pack()
-levelsBtn = Button(menuFr,text='levels',justify= CENTER,height=1,width=10,bg = 'darkblue', fg='white', font=('Comic Sans MS', 14))
-levelsBtn.pack()
 
 
 infoTxt = Label(
