@@ -121,6 +121,9 @@ menuFr.pack( expand=True, fill='both' , side='top' )
 fieldFr = Frame( gameFr, bd = 0)
 fieldFr.pack( expand=True, fill='both')
 
+showcurrRound = Label( menuFr, text = f'Round:{currRound}', font=('David',12), bg='#DDD')
+showcurrRound.pack(anchor='ne')
+
 mainMenuFr = Frame( root, bd = 15)
 mainMenuFr.pack( expand=True, fill='both' )
 
@@ -132,20 +135,37 @@ infoTxt = Label(
 )
 infoTxt.pack( padx=0, pady=0)
 
+welcomelbl = Label(
+    mainMenuFr,
+    text='Welcome to Nextgen Game!',
+    justify=CENTER,
+    font=('Comic Sans MS', 14)
+)
+welcomelbl.pack()
+
 startBtn = Button(
     mainMenuFr,
     text='start',
     justify= CENTER,
     command = startOnClick,
-    height=1, width=10
+    height=1, width=10,
+    bg = 'darkblue',
+    fg='white',
+    font=('Comic Sans MS', 14)
 )
 startBtn.pack()
 
-levelsBtn = Button( mainMenuFr, text='levels', justify = CENTER, height = 1, width = 10 )
+levelsBtn = Button(
+    mainMenuFr,
+    text='levels',
+    justify = CENTER,
+    height = 1, width = 10,
+    bg = 'darkblue',
+    fg='white',
+    font=('Comic Sans MS', 14)
+)
 levelsBtn.pack()
 
-showcurrRound = Label( menuFr, text = f'Round:{currRound}', font=('David',12), bg='#DDD')
-showcurrRound.pack(anchor='ne')
 
 
 
