@@ -1,22 +1,9 @@
 from tkinter import *
 import random
 from tkinter import messagebox as mb
-#!/usr/bin/env python
-# - coding: utf-8 -
 
 root = Tk()
 root.title("NextgenTetris")
-root.resizable('False','False')
-
-mainFrame = Frame( root, bd = 15) 
-mainFrame.pack( expand=True, fill='both' )
-
-menuFr = Frame( mainFrame, bd = 0)
-menuFr.pack( expand=True, fill='both' , side='top' )
-
-fieldFr = Frame( mainFrame, bd = 0)
-fieldFr.pack( expand=True, fill='both')
-
 
 btnSize = 80
 currRound = 1
@@ -137,15 +124,30 @@ fieldFr.pack( expand=True, fill='both')
 mainMenuFr = Frame( root, bd = 15)
 mainMenuFr.pack( expand=True, fill='both' )
 
-
-
 infoTxt = Label(
     menuFr,
     bg='white',
-    text = 'All cells must be the same color',
     justify = CENTER,
     font = ( 'Arial', 12 )
 )
+infoTxt.pack( padx=0, pady=0)
+
+startBtn = Button(
+    mainMenuFr,
+    text='start',
+    justify= CENTER,
+    command = startOnClick,
+    height=1, width=10
+)
+startBtn.pack()
+
+levelsBtn = Button( mainMenuFr, text='levels', justify = CENTER, height = 1, width = 10 )
+levelsBtn.pack()
+
+showcurrRound = Label( menuFr, text = f'Round:{currRound}', font=('David',12), bg='#DDD')
+showcurrRound.pack(anchor='ne')
+
+
 
 
 root.mainloop()
