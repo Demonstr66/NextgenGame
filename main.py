@@ -5,12 +5,32 @@ from tkinter import messagebox as mb
 root = Tk()
 root.title("NextgenTetris")
 
+
 btnSize = 80
-currRound = 1
-row = 2
-col = 2
+currRound = 0
+currStatus = ""
+
 colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff"]
-status = ""
+rounds = [
+    {
+        'row': 2, 'col': 2,
+        'status': 'All cells must be the same color! 1',
+        'timer': None,
+        'randomizeColorOfCell': False
+    },
+    {
+        'row': 2, 'col': 3,
+        'status': 'All cells must be the same color! 2',
+        'timer': None,
+        'randomizeColorOfCell': False
+    },
+    {
+        'row': 3, 'col': 3,
+        'status': 'All cells must be the same color! 3',
+        'timer': None,
+        'randomizeColorOfCell': False
+    },
+]
 
 fieldModel = []
 fieldBtns = []
@@ -21,16 +41,19 @@ def startGame():
     mainMenuFr.forget()
     gameFr.pack( expand=True, fill='both' )
 
-    newGame( currRound )
+    newRound( currRound )
     render()
 
-def newGame( round ):
-    global fieldModel, fieldBtns, status
+def newRound( round ):
+    global fieldModel, fieldBtns, currStatus
+
+    row = rounds[ currRound ][ 'row' ]
+    col = rounds[ currRound ][ 'col' ]
 
     fieldModel = modelInit( row, col )
     fieldBtns = createField( row, col )
 
-    status = "All cells must be the same color"
+    currStatus = rounds[ currRound ][ 'status' ]
 def modelInit( r, c ):
     m = []
     for i in range( r ):
@@ -51,7 +74,15 @@ def createField( r, c ):
             field[i].append( btn )
     return field
 
+def nextLevel():
+    global currRound
+
+    fieldDestroy()
+    newRound( currRound )
+    render()
+
 def check():
+    global currRound, currStatus
     win = True
     sample = fieldModel[0][0]
     for i in range( len(fieldModel) ):
@@ -60,27 +91,35 @@ def check():
                 win = False
 
     if (win):
-        status = "WOOW!! YOU WIN!"
-        ask('YOU WIN!', 'Start new round?', newRound, gotoMainMenu)
+        currStatus = "WOOW!! YOU WIN!"
+        currRound += 1
+
+        typeModal = "okcancel"
+        if ( currRound == len(rounds) ):
+            typeModal = "askretrycancel"
+            currRound = len(rounds) - 1
+        ask('YOU WIN!', 'Start new round?', nextLevel, gotoMainMenu, typeModal)
+
 def fieldDestroy():
-    for i in range( len(fieldModel) ):
-        for j in range( len(fieldModel[0]) ):
-            fieldBtns[i][j].destroy()
-def newRound():
-    print('New Round')
+    if ( fieldModel != [] ):
+        for i in range( len(fieldModel) ):
+            for j in range( len(fieldModel[0]) ):
+                fieldBtns[i][j].destroy()
+
 
 def gotoMainMenu():
     fieldDestroy()
     gameFr.forget()
     mainMenuFr.pack( expand=True, fill='both' )
 
-def ask(title, text, okAction, cancelAction):
-    if mb.askokcancel(title, text):
-        okAction()
-    else:
-        cancelAction()
+def ask(title, text, okAction, cancelAction, type):
+    if ( type == "okcancel" ):
+        okAction() if mb.askokcancel(title, text) else cancelAction()
+    if ( type == "askretrycancel" ):
+        okAction() if mb.askretrycancel(title, text) else cancelAction()
+
 def changeColor( w ):
-    global fieldModel, fieldBtns, status
+    global fieldModel, fieldBtns
 
     for i in range( len(fieldModel) ):
         for j in range( len(fieldModel[0]) ):
@@ -100,7 +139,8 @@ def render():
                 bg = colors[ fieldModel[i][j] ]
             )
     #--------InfoText--------------------
-    infoTxt.config( text = status )
+    infoTxt.config( text = currStatus )
+    showcurrRound.config( text = f'Round: {currRound + 1}' )
 
 #---------------OnClick--------------
 def startOnClick():
@@ -110,7 +150,7 @@ def fieldOnClick(e):
     changeColor( e.widget )
     check()
 
-
+#---------------VisualElements-------
 
 gameFr = Frame( root, bd = 15)
 #gameFr.pack( expand=True, fill='both' )
@@ -121,7 +161,7 @@ menuFr.pack( expand=True, fill='both' , side='top' )
 fieldFr = Frame( gameFr, bd = 0)
 fieldFr.pack( expand=True, fill='both')
 
-showcurrRound = Label( menuFr, text = f'Round:{currRound}', font=('David',12), bg='#DDD')
+showcurrRound = Label( menuFr, font=('David',12), bg='#DDD')
 showcurrRound.pack(anchor='ne')
 
 mainMenuFr = Frame( root, bd = 15)
@@ -129,7 +169,7 @@ mainMenuFr.pack( expand=True, fill='both' )
 
 infoTxt = Label(
     menuFr,
-    bg='white',
+    # bg='white',
     justify = CENTER,
     font = ( 'Arial', 12 )
 )
