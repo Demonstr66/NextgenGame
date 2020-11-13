@@ -96,7 +96,7 @@ def check():
 
         typeModal = "okcancel"
         if ( currRound == len(rounds) ):
-            typeModal = "askretrycancel"
+            typeModal = "retrycancel"
             currRound = len(rounds) - 1
         ask('YOU WIN!', 'Start new round?', nextLevel, gotoMainMenu, typeModal)
 
@@ -115,7 +115,7 @@ def gotoMainMenu():
 def ask(title, text, okAction, cancelAction, type):
     if ( type == "okcancel" ):
         okAction() if mb.askokcancel(title, text) else cancelAction()
-    if ( type == "askretrycancel" ):
+    if ( type == "retrycancel" ):
         okAction() if mb.askretrycancel(title, text) else cancelAction()
 
 def changeColor( w ):
