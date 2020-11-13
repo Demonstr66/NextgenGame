@@ -7,14 +7,15 @@ root.title("NextgenTetris")
 
 btnSize = 80
 currRound = 1
-row = 2
-col = 2
+row = 3
+col = 3
 colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff"]
 status = ""
 
-fieldModel = []
-fieldBtns = []
+fieldModel = [] #colors in a field
+fieldBtns = []  #buttons in a field
 
+list = []
 
 #---------------RefactoringFunc------
 def startGame():
@@ -31,7 +32,7 @@ def newGame( round ):
     fieldBtns = createField( row, col )
 
     status = "All cells must be the same color"
-def modelInit( r, c ):
+def modelInit( r, c ): #-----fill fieldModel-----
     m = []
     for i in range( r ):
         m.append([])
@@ -40,14 +41,14 @@ def modelInit( r, c ):
             m[i].append( code )
     return m
 
-def createField( r, c ):
+def createField( r, c ): #-----fill fieldBtns-----
     field = []
     for i in range( r ):
         field.append([])
         for j in range( c ):
             btn = Button( fieldFr )
             btn.grid( row=i, column=j, sticky='nsew')
-            btn.bind( '<Button-1>', fieldOnClick )
+            btn.bind( '<Button-1>', lambda btn , fm1 = i, fm2 = j: fieldOnClick(btn,fm1,fm2))
             field[i].append( btn )
     return field
 
@@ -67,7 +68,11 @@ def fieldDestroy():
         for j in range( len(fieldModel[0]) ):
             fieldBtns[i][j].destroy()
 def newRound():
-    print('New Round')
+    global currRound
+    fieldDestroy()
+    startGame()
+    currRound += 1
+    showcurrRound['text'] = f'Round:{currRound}'
 
 def gotoMainMenu():
     fieldDestroy()
@@ -79,15 +84,11 @@ def ask(title, text, okAction, cancelAction):
         okAction()
     else:
         cancelAction()
-def changeColor( w ):
+def changeColor( w, fm1, fm2 ):
     global fieldModel, fieldBtns, status
-
-    for i in range( len(fieldModel) ):
-        for j in range( len(fieldModel[0]) ):
-            if fieldBtns[i][j] == w:
-                fieldModel[i][j] += 1
-            if fieldModel[i][j] == len(colors):
-                fieldModel[i][j] = 0
+    fieldModel[fm1][fm2] += 1
+    if fieldModel[fm1][fm2] == len(colors):
+        fieldModel[fm1][fm2] = 0
     render()
 
 def render():
@@ -106,8 +107,8 @@ def render():
 def startOnClick():
     startGame()
 
-def fieldOnClick(e):
-    changeColor( e.widget )
+def fieldOnClick(e,fm1,fm2):
+    changeColor(e, fm1, fm2 )
     check()
 
 
@@ -126,6 +127,16 @@ showcurrRound.pack(anchor='ne')
 
 mainMenuFr = Frame( root, bd = 15)
 mainMenuFr.pack( expand=True, fill='both' )
+
+Backbtn = Button(
+    menuFr,
+    bg='white',
+    justify = CENTER,
+    text = 'Back',
+    font = 8,
+    command = gotoMainMenu
+    )
+Backbtn.pack()
 
 infoTxt = Label(
     menuFr,
@@ -165,6 +176,7 @@ levelsBtn = Button(
     font=('Comic Sans MS', 14)
 )
 levelsBtn.pack()
+
 
 
 
