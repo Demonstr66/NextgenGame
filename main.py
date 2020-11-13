@@ -208,6 +208,6 @@ levelsBtn.pack()
 
 
 
-
+root.update_idletasks()
 
 root.mainloop()
