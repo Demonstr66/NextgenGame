@@ -19,7 +19,7 @@ rounds = [
         'timer': None,
         'rndColorOfCell': False, # Or timer
         'rndOrderColors': False,
-        'numberOfColors': 5
+        'numberOfColors': 3
     },
     {
         'id': 2,
@@ -27,7 +27,7 @@ rounds = [
         'status': 'All cells must be the same color! 2',
         'timer': None,
         'rndColorOfCell': False, # Or timer
-        'rndOrderColors': False,
+        'rndOrderColors': True,
         'numberOfColors': 5
     },
     {
@@ -37,7 +37,7 @@ rounds = [
         'timer': None,
         'rndColorOfCell': False, # Or timer
         'rndOrderColors': False,
-        'numberOfColors': 5
+        'numberOfColors': 8
     },
 ]
 
@@ -59,16 +59,16 @@ def newRound( round ):
     row = rounds[ currRound ][ 'row' ]
     col = rounds[ currRound ][ 'col' ]
 
-    fieldModel = modelInit( row, col )
+    fieldModel = modelInit( row, col, rounds[ currRound ][ 'numberOfColors' ] )
     fieldBtns = createField( row, col )
 
     currStatus = rounds[ currRound ][ 'status' ]
-def modelInit( r, c ):
+def modelInit( r, c, colorNum ):
     m = []
     for i in range( r ):
         m.append([])
         for j in range( c ):
-            code = random.randint( 0, len(colors) - 1 )
+            code = random.randint( 0, colorNum - 1 )
             m[i].append( code )
     return m
 
@@ -141,12 +141,22 @@ def ask(title, text, okAction, cancelAction, type):
 
 def changeColor(i, j):
     global fieldModel
-
-    fieldModel[i][j] += 1
-    if fieldModel[i][j] == len(colors):
-        fieldModel[i][j] = 0
+    if rounds[ currRound ][ 'rndOrderColors' ] == False:
+        fieldModel[i][j] += 1
+        if fieldModel[i][j] == rounds[ currRound ][ 'numberOfColors' ]:
+            fieldModel[i][j] = 0
+    else:
+        n = fieldModel[i][j]
+        newColor = n
+        print('n', n)
+        while newColor == n:
+            newColor = random.randint( 0, rounds[ currRound ][ 'numberOfColors' ] - 1 )
+            print("While:", n, newColor)
+        fieldModel[i][j] = newColor
 
     render()
+
+
 def render():
     #--------Field--------------------
     for i in range( len(fieldModel) ):
@@ -169,10 +179,10 @@ def startOnClick():
 #     check()
 
 def btnFieldClick(i, j):
-    return lambda e:{
-                changeColor(i, j),
-                check()
-            }
+    def btnOnClick(e):
+        changeColor(i, j)
+        check()
+    return btnOnClick
 #---------------VisualElements-------
 
 gameFr = Frame( root, bd = 15)
