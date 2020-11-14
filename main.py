@@ -13,22 +13,31 @@ currStatus = ""
 colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff"]
 rounds = [
     {
+        'id': 1,
         'row': 2, 'col': 2,
         'status': 'All cells must be the same color! 1',
         'timer': None,
-        'randomizeColorOfCell': False
+        'rndColorOfCell': False, # Or timer
+        'rndOrderColors': False,
+        'numberOfColors': 5
     },
     {
+        'id': 2,
         'row': 2, 'col': 3,
         'status': 'All cells must be the same color! 2',
         'timer': None,
-        'randomizeColorOfCell': False
+        'rndColorOfCell': False, # Or timer
+        'rndOrderColors': False,
+        'numberOfColors': 5
     },
     {
+        'id': 3,
         'row': 3, 'col': 3,
         'status': 'All cells must be the same color! 3',
         'timer': None,
-        'randomizeColorOfCell': False
+        'rndColorOfCell': False, # Or timer
+        'rndOrderColors': False,
+        'numberOfColors': 5
     },
 ]
 
@@ -70,9 +79,10 @@ def createField( r, c ):
         for j in range( c ):
             btn = Button( fieldFr )
             btn.grid( row=i, column=j, sticky='nsew')
-            btn.bind( '<Button-1>', fieldOnClick )
+            btn.bind( '<Button-1>', btnFieldClick(i, j))
             field[i].append( btn )
     return field
+
 
 def nextLevel():
     global currRound
@@ -118,17 +128,25 @@ def ask(title, text, okAction, cancelAction, type):
     if ( type == "retrycancel" ):
         okAction() if mb.askretrycancel(title, text) else cancelAction()
 
-def changeColor( w ):
-    global fieldModel, fieldBtns
+# def changeColor( w ):
+#     global fieldModel, fieldBtns
+#
+#     for i in range( len(fieldModel) ):
+#         for j in range( len(fieldModel[0]) ):
+#             if fieldBtns[i][j] == w:
+#                 fieldModel[i][j] += 1
+#             if fieldModel[i][j] == len(colors):
+#                 fieldModel[i][j] = 0
+#     render()
 
-    for i in range( len(fieldModel) ):
-        for j in range( len(fieldModel[0]) ):
-            if fieldBtns[i][j] == w:
-                fieldModel[i][j] += 1
-            if fieldModel[i][j] == len(colors):
-                fieldModel[i][j] = 0
+def changeColor(i, j):
+    global fieldModel
+
+    fieldModel[i][j] += 1
+    if fieldModel[i][j] == len(colors):
+        fieldModel[i][j] = 0
+
     render()
-
 def render():
     #--------Field--------------------
     for i in range( len(fieldModel) ):
@@ -146,10 +164,15 @@ def render():
 def startOnClick():
     startGame()
 
-def fieldOnClick(e):
-    changeColor( e.widget )
-    check()
+# def fieldOnClick(e):
+#     changeColor( e.widget )
+#     check()
 
+def btnFieldClick(i, j):
+    return lambda e:{
+                changeColor(i, j),
+                check()
+            }
 #---------------VisualElements-------
 
 gameFr = Frame( root, bd = 15)
