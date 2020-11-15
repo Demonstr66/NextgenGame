@@ -35,8 +35,8 @@ rounds = [
         'row': 3, 'col': 3,
         'status': 'All cells must be the same color! 3',
         'timer': None,
-        'rndColorOfCell': False, # Or timer
-        'rndOrderColors': False,
+        'rndColorOfCell': 5000, # Or False
+        'rndOrderColors': True,
         'numberOfColors': 8
     },
 ]
@@ -63,6 +63,27 @@ def newRound( round ):
     fieldBtns = createField( row, col )
 
     currStatus = rounds[ currRound ][ 'status' ]
+
+    time = rounds[ currRound ][ 'rndColorOfCell' ]
+    if ( time ):
+        fieldFr.after( time, rndChangeColor)
+def rndChangeColor():
+    global fieldModel
+
+    time = rounds[ currRound ][ 'rndColorOfCell' ]
+
+    i = random.randint( 0, len(fieldModel) - 1 )
+    j = random.randint( 0, len(fieldModel[0]) - 1 )
+
+    oldColor = fieldModel[i][j]
+    newColor = oldColor
+
+    while newColor == oldColor:
+        newColor = random.randint( 0, rounds[ currRound ][ 'numberOfColors' ] - 1 )
+    fieldModel[i][j] = newColor
+
+    render()
+    if not check(): fieldFr.after( time, rndChangeColor )
 def modelInit( r, c, colorNum ):
     m = []
     for i in range( r ):
@@ -128,32 +149,22 @@ def ask(title, text, okAction, cancelAction, type):
     if ( type == "retrycancel" ):
         okAction() if mb.askretrycancel(title, text) else cancelAction()
 
-# def changeColor( w ):
-#     global fieldModel, fieldBtns
-#
-#     for i in range( len(fieldModel) ):
-#         for j in range( len(fieldModel[0]) ):
-#             if fieldBtns[i][j] == w:
-#                 fieldModel[i][j] += 1
-#             if fieldModel[i][j] == len(colors):
-#                 fieldModel[i][j] = 0
-#     render()
 
 def changeColor(i, j):
     global fieldModel
-    if rounds[ currRound ][ 'rndOrderColors' ] == False:
-        fieldModel[i][j] += 1
-        if fieldModel[i][j] == rounds[ currRound ][ 'numberOfColors' ]:
-            fieldModel[i][j] = 0
-    else:
-        n = fieldModel[i][j]
-        newColor = n
-        print('n', n)
+
+    n = fieldModel[i][j]
+    newColor = n
+
+    if rounds[ currRound ][ 'rndOrderColors' ] == True:
         while newColor == n:
             newColor = random.randint( 0, rounds[ currRound ][ 'numberOfColors' ] - 1 )
-            print("While:", n, newColor)
-        fieldModel[i][j] = newColor
+    else:
+        newColor += 1
+        if newColor == rounds[ currRound ][ 'numberOfColors' ]:
+            newColor = 0
 
+    fieldModel[i][j] = newColor
     render()
 
 
@@ -168,15 +179,11 @@ def render():
             )
     #--------InfoText--------------------
     infoTxt.config( text = currStatus )
-    showcurrRound.config( text = f'Round: {currRound + 1}' )
+    showCurrRound.config( text = f'Round: {currRound + 1}' )
 
 #---------------OnClick--------------
 def startOnClick():
     startGame()
-
-# def fieldOnClick(e):
-#     changeColor( e.widget )
-#     check()
 
 def btnFieldClick(i, j):
     def btnOnClick(e):
@@ -194,8 +201,8 @@ menuFr.pack( expand=True, fill='both' , side='top' )
 fieldFr = Frame( gameFr, bd = 0)
 fieldFr.pack( expand=True, fill='both')
 
-showcurrRound = Label( menuFr, font=('David',12), bg='#DDD')
-showcurrRound.pack(anchor='ne')
+showCurrRound = Label( menuFr, font=('David',12), bg='#DDD')
+showCurrRound.pack(anchor='ne')
 
 mainMenuFr = Frame( root, bd = 15)
 mainMenuFr.pack( expand=True, fill='both' )
