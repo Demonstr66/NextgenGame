@@ -5,39 +5,71 @@ from tkinter import messagebox as mb
 root = Tk()
 root.title("NextgenTetris")
 
+
 btnSize = 80
-currRound = 1
-row = 3
-col = 3
+currRound = 0
+currStatus = ""
+
 colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff"]
-status = ""
+rounds = [
+    {
+        'id': 1,
+        'row': 2, 'col': 2,
+        'status': 'All cells must be the same color! 1',
+        'timer': None,
+        'rndColorOfCell': False, # Or timer
+        'rndOrderColors': False,
+        'numberOfColors': 2
+    },
+    {
+        'id': 2,
+        'row': 2, 'col': 3,
+        'status': 'All cells must be the same color! 2',
+        'timer': None,
+        'rndColorOfCell': False, # Or timer
+        'rndOrderColors': False,
+        'numberOfColors': 4
+    },
+    {
+        'id': 3,
+        'row': 3, 'col': 3,
+        'status': 'All cells must be the same color! 3',
+        'timer': None,
+        'rndColorOfCell': False, # Or timer
+        'rndOrderColors': False,
+        'numberOfColors': 3
+    },
+]
 
 fieldModel = [] #colors in a field
 fieldBtns = []  #buttons in a field
 
-list = []
+
 
 #---------------RefactoringFunc------
 def startGame():
     mainMenuFr.forget()
     gameFr.pack( expand=True, fill='both' )
 
-    newGame( currRound )
+    newRound( currRound )
     render()
 
-def newGame( round ):
-    global fieldModel, fieldBtns, status
+def newRound( round ):
+    global fieldModel, fieldBtns, currStatus
 
-    fieldModel = modelInit( row, col )
+    row = rounds[ currRound ][ 'row' ]
+    col = rounds[ currRound ][ 'col' ]
+
+    fieldModel = modelInit( row, col, round )
     fieldBtns = createField( row, col )
 
-    status = "All cells must be the same color"
-def modelInit( r, c ): #-----fill fieldModel-----
+    currStatus = rounds[ currRound ][ 'status' ]
+def modelInit( r, c , round):   #---------ColorModel---------
     m = []
     for i in range( r ):
         m.append([])
         for j in range( c ):
-            code = random.randint( 0, len(colors) - 1 )
+            code = random.randint( 0, rounds[ round ][ 'numberOfColors' ] - 1 )
             m[i].append( code )
     return m
 
@@ -48,11 +80,20 @@ def createField( r, c ): #-----fill fieldBtns-----
         for j in range( c ):
             btn = Button( fieldFr )
             btn.grid( row=i, column=j, sticky='nsew')
-            btn.bind( '<Button-1>', lambda btn , fm1 = i, fm2 = j: fieldOnClick(btn,fm1,fm2))
+            btn.bind( '<Button-1>', btnFieldClick(i, j))
             field[i].append( btn )
     return field
 
+
+def nextLevel():
+    global currRound
+
+    fieldDestroy()
+    newRound( currRound )
+    render()
+
 def check():
+    global currRound, currStatus
     win = True
     sample = fieldModel[0][0]
     for i in range( len(fieldModel) ):
@@ -61,35 +102,43 @@ def check():
                 win = False
 
     if (win):
-        status = "WOOW!! YOU WIN!"
-        ask('YOU WIN!', 'Start new round?', newRound, gotoMainMenu)
+        currStatus = "WOOW!! YOU WIN!"
+        currRound += 1
+
+        typeModal = "okcancel"
+        if ( currRound == len(rounds) ):
+            typeModal = "retrycancel"
+            currRound = len(rounds) - 1
+        ask('YOU WIN!', 'Start new round?', nextLevel, gotoMainMenu, typeModal)
+
 def fieldDestroy():
-    for i in range( len(fieldModel) ):
-        for j in range( len(fieldModel[0]) ):
-            fieldBtns[i][j].destroy()
-def newRound():
-    global currRound
-    fieldDestroy()
-    startGame()
-    currRound += 1
-    showcurrRound['text'] = f'Round:{currRound}'
+    if ( fieldModel != [] ):
+        for i in range( len(fieldModel) ):
+            for j in range( len(fieldModel[0]) ):
+                fieldBtns[i][j].destroy()
+
 
 def gotoMainMenu():
     fieldDestroy()
     gameFr.forget()
     mainMenuFr.pack( expand=True, fill='both' )
 
-def ask(title, text, okAction, cancelAction):
-    if mb.askokcancel(title, text):
-        okAction()
-    else:
-        cancelAction()
-def changeColor( w, fm1, fm2 ):
-    global fieldModel, fieldBtns, status
-    fieldModel[fm1][fm2] += 1
-    if fieldModel[fm1][fm2] == len(colors):
-        fieldModel[fm1][fm2] = 0
+def ask(title, text, okAction, cancelAction, type):
+    if ( type == "okcancel" ):
+        okAction() if mb.askokcancel(title, text) else cancelAction()
+    if ( type == "retrycancel" ):
+        okAction() if mb.askretrycancel(title, text) else cancelAction()
+
+
+def changeColor(i, j):
+    global fieldModel, currRound
+
+    fieldModel[i][j] += 1
+    if fieldModel[i][j] == rounds[currRound]['numberOfColors']:
+        fieldModel[i][j] = 0
+
     render()
+
 
 def render():
     #--------Field--------------------
@@ -101,17 +150,23 @@ def render():
                 bg = colors[ fieldModel[i][j] ]
             )
     #--------InfoText--------------------
-    infoTxt.config( text = status )
+    infoTxt.config( text = currStatus )
+    showcurrRound.config( text = f'Round: {currRound + 1}' )
 
 #---------------OnClick--------------
 def startOnClick():
     startGame()
 
-def fieldOnClick(e,fm1,fm2):
-    changeColor(e, fm1, fm2 )
-    check()
+# def fieldOnClick(e):
+#     changeColor( e.widget )
+#     check()
 
-
+def btnFieldClick(i, j):
+    return lambda e:{
+                changeColor(i, j),
+                check()
+            }
+#---------------VisualElements-------
 
 gameFr = Frame( root, bd = 15)
 #gameFr.pack( expand=True, fill='both' )
@@ -122,25 +177,16 @@ menuFr.pack( expand=True, fill='both' , side='top' )
 fieldFr = Frame( gameFr, bd = 0)
 fieldFr.pack( expand=True, fill='both')
 
-showcurrRound = Label( menuFr, text = f'Round:{currRound}', font=('David',12), bg='#DDD')
+showcurrRound = Label( menuFr, font=('David',12), bg='#DDD')
 showcurrRound.pack(anchor='ne')
 
 mainMenuFr = Frame( root, bd = 15)
 mainMenuFr.pack( expand=True, fill='both' )
 
-Backbtn = Button(
-    menuFr,
-    bg='white',
-    justify = CENTER,
-    text = 'Back',
-    font = 8,
-    command = gotoMainMenu
-    )
-Backbtn.pack()
 
 infoTxt = Label(
     menuFr,
-    bg='white',
+    # bg='white',
     justify = CENTER,
     font = ( 'Arial', 12 )
 )
