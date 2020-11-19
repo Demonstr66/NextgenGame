@@ -1,7 +1,8 @@
 from tkinter import *
 import random
 from tkinter import messagebox as mb
-import timer as timer
+from helper import timer as timer
+from helper import human as human
 
 root = Tk()
 root.title("NextgenTetris")
@@ -49,10 +50,71 @@ fieldBtns = []
 def startGame():
     mainMenuFr.forget()
     gameFr.pack( expand=True, fill='both' )
-    t = timer.App( menuFr )
     newRound( currRound )
     render()
 
+    #------------------------------------------------------LESSON
+    # Тут я покажу как использовать наш класс,
+    # когда будет вызвана функция startGame
+    # Мы создадим меня)))
+
+    #Как видишь, тут только 2 аргумента, self пропускаем
+    # Если бы у нас в конструкторе был только self
+    # То тут вызывали бы так human()
+    dima = human('Dima', 26)
+    # теперь dima - это экземпляр класса human и обладает всеми
+    # его методами и атрибутами
+
+    # Теперь я поздороваюсь
+    dima.sayHi()
+    print('#------------------------------')
+
+    # Но что если мне нужно только имя?
+    # легко
+    print(dima.name)
+    print('#------------------------------')
+
+    # Теперь создадим тебя
+    leha = human('Alex', 14)
+
+    # Здоровайся
+    leha.sayHi()
+    print('#------------------------------')
+    # Выведется
+    # Hi, my name is Alex
+    # I was born at 06.01.1994
+
+    # Стоп стоп стоп, это же не твоя дата рождения
+    # верно, тк дату рождениямы статично присваиваем в классе всегда одинаковою
+    # но этоне беда
+    leha.birthday = "30.09.2006"
+
+    # Вот теперь скажи привет
+    leha.sayHi()
+    print('#------------------------------')
+    # Теперь все гуд
+
+    # А что тамс любимым фильмом?
+    # print(leha.__bestFilm)
+    #Можешь расскоментироватьи попробовать - будет ошибка
+
+    #А вот так норм
+    print(leha.getBestFilm())
+    print('#------------------------------')
+
+    # Конечно это не помешает нам сделать вот так
+    leha.__bestFilm = 'Titanik'
+    print(leha.__bestFilm)
+    print('#------------------------------')
+
+
+    # Но это не изменит внутреннее значение
+    # Поэтому когдамы захотим узнать
+    # Какой ты фильм любишь по настоящему
+    # Мывызываем опять геттер и видим изначальный результат
+    print(leha.getBestFilm())
+    print('#------------------------------')
+    #------------------------------------------------------LESSON
 def newRound( round ):
     global fieldModel, fieldBtns, currStatus
 
