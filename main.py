@@ -1,10 +1,10 @@
 from tkinter import *
 import random
 from tkinter import messagebox as mb
+import timer as timer
 
 root = Tk()
 root.title("NextgenTetris")
-
 
 btnSize = 80
 currRound = 0
@@ -35,7 +35,7 @@ rounds = [
         'row': 3, 'col': 3,
         'status': 'All cells must be the same color! 3',
         'timer': None,
-        'rndColorOfCell': 5000, # Or False
+        'rndColorOfCell': 10000, # Or False
         'rndOrderColors': True,
         'numberOfColors': 8
     },
@@ -49,7 +49,7 @@ fieldBtns = []
 def startGame():
     mainMenuFr.forget()
     gameFr.pack( expand=True, fill='both' )
-
+    t = timer.App( menuFr )
     newRound( currRound )
     render()
 
@@ -71,6 +71,7 @@ def rndChangeColor():
     global fieldModel
 
     time = rounds[ currRound ][ 'rndColorOfCell' ]
+
 
     i = random.randint( 0, len(fieldModel) - 1 )
     j = random.randint( 0, len(fieldModel[0]) - 1 )
@@ -198,7 +199,7 @@ gameFr = Frame( root, bd = 15)
 menuFr = Frame( gameFr, bd = 0)
 menuFr.pack( expand=True, fill='both' , side='top' )
 
-fieldFr = Frame( gameFr, bd = 0)
+fieldFr = Frame( gameFr, bd = 0 )
 fieldFr.pack( expand=True, fill='both')
 
 showCurrRound = Label( menuFr, font=('David',12), bg='#DDD')
@@ -248,6 +249,7 @@ levelsBtn.pack()
 
 
 
-root.update_idletasks()
+
+root.resizable(0, 0)
 
 root.mainloop()
