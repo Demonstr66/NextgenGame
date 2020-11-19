@@ -62,22 +62,3 @@ class human(): #Вот так объявляется класс, тут собк
 
     def printBirthday(self):
         print(f'I was born at {self.birthday}')
-
-
-
-
-
-
-class timer():
-    def __init__(self, root):
-        self.root = root
-        self.label = Label( self.root, text="")
-        self.label.pack()
-        self.n = 0
-        self.update_clock()
-
-    def update_clock(self):
-        self.n += 1
-        print(self.n)
-        self.label.configure(text=self.n)
-        self.root.after(1, self.update_clock)

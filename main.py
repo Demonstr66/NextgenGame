@@ -1,7 +1,6 @@
 from tkinter import *
 import random
 from tkinter import messagebox as mb
-from helper import timer as timer
 from helper import human as human
 
 root = Tk()
