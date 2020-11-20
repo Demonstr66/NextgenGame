@@ -1,8 +1,7 @@
 from tkinter import *
 import random
 from tkinter import messagebox as mb
-import timer as timer
-
+#import timer as timer
 root = Tk()
 root.title("NextgenTetris")
 
@@ -10,7 +9,8 @@ btnSize = 80
 currRound = 0
 currStatus = ""
 
-colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff"]
+colors = ["#f00", "#0f0", "#00f", "#ff0", "#f0f", "#0ff", "#000", "#fff","#60F", "#f90"]
+#           red    green   blue   yellow   pink   lBlue    white  black  fiolet  orange
 rounds = [
     {
         'id': 1,
@@ -19,7 +19,7 @@ rounds = [
         'timer': None,
         'rndColorOfCell': False, # Or timer
         'rndOrderColors': False,
-        'numberOfColors': 3
+        'numberOfColors': 10
     },
     {
         'id': 2,
@@ -33,7 +33,7 @@ rounds = [
     {
         'id': 3,
         'row': 3, 'col': 3,
-        'status': 'All cells must be the same color! 3',
+        'status': f'All cells must be the same color! {id}',
         'timer': None,
         'rndColorOfCell': 10000, # Or False
         'rndOrderColors': True,
@@ -49,7 +49,7 @@ fieldBtns = []
 def startGame():
     mainMenuFr.forget()
     gameFr.pack( expand=True, fill='both' )
-    t = timer.App( menuFr )
+    #t = timer.App( menuFr )
     newRound( currRound )
     render()
 
