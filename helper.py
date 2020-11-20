@@ -195,7 +195,7 @@ def stopt():
     a.stop()
 
 def end(a):
-    print(a)
+    print('asd')
 
 def but():
     a.start()
@@ -216,12 +216,21 @@ class timer():
             self.widget['text'] = self.time
             self.check()
         else:
-            self.endAct(self.endArgs)
+            self.endAct()
     def stop(self):
         self.on = False
     def check(self):
         if self.on == True:
             self.widget.after(1000, self.start)
+# Я нашел где ты запутался)
+# Пытаешься все делать в старте, но ведь старт должен только запускать
+# И все)
+# Попробуй разделить, обязанности - прилагаю картинку посмотри в папке
+# Каждый прямуогольник с обычными углами это отдельный логический блок
+# А вот пример прорисовки в фрейм
+# def __init__(self, frame):
+#     self.root = Frame
+#     self.widget = Label(self.root, text = "00:00")
 
 
 a = timer(timerShow,  30, end , 777 )
