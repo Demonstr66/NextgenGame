@@ -210,7 +210,6 @@ class timer():
         self.endAct = endAct
         self.endArgs = endArgs
     def start(self):
-        self.on = True
         if self.time < self.maxtime:
             self.time += 1
             self.widget['text'] = self.time
