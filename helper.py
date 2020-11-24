@@ -194,33 +194,38 @@ timerShow.pack()
 def stopt():
     a.stop()
 
-def end(a):
+def end():
     print('asd')
 
 def but():
     a.start()
 class timer():
 
-    def __init__(self, widget, maxtime, endAct = None, endArgs = None):
+    def __init__(self, widget, maxtime, endAct = None, endArgs = None, inc = 1):
         self.on = False
-
+        self.delay = 10
         self.maxtime = maxtime
-        self.time = 0
+        self.time = None
         self.widget = widget
         self.endAct = endAct
         self.endArgs = endArgs
     def start(self):
-        if self.time < self.maxtime:
-            self.time += 1
-            self.widget['text'] = self.time
-            self.check()
-        else:
-            self.endAct()
+        self.on = True
+        self.time = 0
+        self._tick()
     def stop(self):
         self.on = False
-    def check(self):
+    def _check(self):
         if self.on == True:
-            self.widget.after(1000, self.start)
+            self.widget.after(self.delay , self._tick)
+    def _tick(self):
+        if (self.time < self.maxtime) and (self.on != False):
+            self.time += self.delay
+            print(self.time)
+            self.widget['text'] = self.time // 1000
+            self._check()
+        elif self.time >= self.maxtime:
+            self.endAct()
 # Я нашел где ты запутался)
 # Пытаешься все делать в старте, но ведь старт должен только запускать
 # И все)
@@ -232,7 +237,7 @@ class timer():
 #     self.widget = Label(self.root, text = "00:00")
 
 
-a = timer(timerShow,  30, end , 777 )
+a = timer(timerShow,  30000, end , 777 )
 b = Button(text='start', command = but)
 b.pack()
 
@@ -240,6 +245,12 @@ b.pack()
 c = Button(text='stop', command = stopt)
 c.pack()
 
+class timer(Label):
+    def __init__(self, master, **kw):
+        super().__init__( master, kw )
+        self.time = 0
 
-
+t = timer(root, text = "I`m timer!")
+t.pack()
+print(t.time)
 root.mainloop()
