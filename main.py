@@ -17,7 +17,7 @@ rounds = [
         'id': 1,
         'row': 2, 'col': 2,
         'status': 'All cells must be the same color! 1',
-        'timer': None,
+        'timer': 10000,
         'rndColorOfCell': False, # Or timer
         'rndOrderColors': False,
         'numberOfColors': 10
@@ -45,6 +45,8 @@ rounds = [
 fieldModel = []
 fieldBtns = []
 
+currtime = 0
+
 
 #---------------RefactoringFunc------
 def startGame():
@@ -53,6 +55,7 @@ def startGame():
     newRound( currRound )
     render()
 def newRound( round ):
+    timerCreate(rounds[currRound][ 'timer' ])
     global fieldModel, fieldBtns, currStatus
 
     row = rounds[ currRound ][ 'row' ]
@@ -66,6 +69,17 @@ def newRound( round ):
     time = rounds[ currRound ][ 'rndColorOfCell' ]
     if ( time ):
         fieldFr.after( time, rndChangeColor)
+
+def timerCreate(time):
+    global currtime
+    Show = Label(gameFr, text=0)
+    Show.pack()
+    t = timer(Show,time)
+    currtime = timer.start(t)
+    print(currtime)
+
+
+
 def rndChangeColor():
     global fieldModel
 
@@ -169,6 +183,7 @@ def changeColor(i, j):
 
 
 def render():
+    global currtime
     #--------Field--------------------
     for i in range( len(fieldModel) ):
         fieldFr.rowconfigure( i, weight=1, minsize = btnSize )
@@ -180,6 +195,8 @@ def render():
     #--------InfoText--------------------
     infoTxt.config( text = currStatus )
     showCurrRound.config( text = f'Round: {currRound + 1}' )
+    print(currtime)
+
 
 #---------------OnClick--------------
 def startOnClick():
