@@ -17,7 +17,7 @@ rounds = [
         'id': 1,
         'row': 2, 'col': 2,
         'status': 'All cells must be the same color! 1',
-        'timer': 10000,
+        'timer': 50000,
         'rndColorOfCell': False, # Or timer
         'rndOrderColors': False,
         'numberOfColors': 10
@@ -55,9 +55,9 @@ def startGame():
     newRound( currRound )
     render()
 def newRound( round ):
-    timerCreate(rounds[currRound][ 'timer' ])
-    global fieldModel, fieldBtns, currStatus
-
+    global fieldModel, fieldBtns, currStatus, currtime
+    currtime = 0
+    Show.config(text=currtime)
     row = rounds[ currRound ][ 'row' ]
     col = rounds[ currRound ][ 'col' ]
 
@@ -69,14 +69,14 @@ def newRound( round ):
     time = rounds[ currRound ][ 'rndColorOfCell' ]
     if ( time ):
         fieldFr.after( time, rndChangeColor)
+    # timerCreate(rounds[currRound][ 'timer' ])
 
-def timerCreate(time):
-    global currtime
-    Show = Label(gameFr, text=0)
-    Show.pack()
-    t = timer(Show,time)
-    currtime = timer.start(t)
-    print(currtime)
+# def timerCreate(timeimp):
+#     global currtime
+#     t = timer(Show,timeimp)
+#     t.start()
+#     currtime = t.time
+
 
 
 
@@ -135,15 +135,18 @@ def check():
             if sample != fieldModel[i][j]:
                 win = False
 
-    if (win):
+    if win:
         currStatus = "WOOW!! YOU WIN!"
         currRound += 1
+        print(t.stop())
 
-        typeModal = "okcancel"
+        typeModal = "askokcancel"
         if ( currRound == len(rounds) ):
-            typeModal = "retrycancel"
+            typeModal = "askretrycancel"
             currRound = len(rounds) - 1
-        ask('YOU WIN!', 'Start new round?', nextLevel, gotoMainMenu, typeModal)
+        mb = ask('YOU WIN!', 'Start new round?', nextLevel, gotoMainMenu, typeModal)
+        mb.create()
+
 
 def fieldDestroy():
     if ( fieldModel != [] ):
@@ -157,11 +160,11 @@ def gotoMainMenu():
     gameFr.forget()
     mainMenuFr.pack( expand=True, fill='both' )
 
-def ask(title, text, okAction, cancelAction, type):
-    if ( type == "okcancel" ):
-        okAction() if mb.askokcancel(title, text) else cancelAction()
-    if ( type == "retrycancel" ):
-        okAction() if mb.askretrycancel(title, text) else cancelAction()
+# def ask(title, text, okAction, cancelAction, type):
+#     if ( type == "okcancel" ):
+#         okAction() if mb.askokcancel(title, text) else cancelAction()
+#     if ( type == "retrycancel" ):
+#         okAction() if mb.askretrycancel(title, text) else cancelAction()
 
 
 def changeColor(i, j):
@@ -195,7 +198,7 @@ def render():
     #--------InfoText--------------------
     infoTxt.config( text = currStatus )
     showCurrRound.config( text = f'Round: {currRound + 1}' )
-    print(currtime)
+
 
 
 #---------------OnClick--------------
@@ -211,6 +214,10 @@ def btnFieldClick(i, j):
 
 gameFr = Frame( root, bd = 15)
 #gameFr.pack( expand=True, fill='both' )
+Show = Label(gameFr, text=0)
+Show.pack()
+t = timer(Show)
+
 
 menuFr = Frame( gameFr, bd = 0)
 menuFr.pack( expand=True, fill='both' , side='top' )
