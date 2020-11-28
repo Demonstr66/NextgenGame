@@ -3,6 +3,21 @@ import math, random
 from config import *
 from levels import ROUNDS
 
+class Ask():
+    """Show messagebox"""
+
+    def __init__(self, title,  text, okAction, cancelAction, type):
+        self.title = title
+        self.text = text
+        self.okAction = okAction
+        self.cancelAction = cancelAction
+        self.type = type
+    def show(self):
+        if ( self.type == "ok" ):
+            self.okAction() if messagebox.askokcancel(self.title, self.text) else self.cancelAction()
+        if ( self.type == "retry" ):
+            self.okAction() if messagebox.askretrycancel(self.title, self.text) else self.cancelAction()
+
 class Timer(Label):
     def __init__(self, master = None, **kw):
         kw = self._parse( kw )

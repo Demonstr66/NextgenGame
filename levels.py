@@ -14,7 +14,7 @@ ROUNDS = [
         'status': 'All cells must be the same color! 2',
         'timer': None,
         'rndCellColors': False, # Or timer
-        'rndOrderColors': True,
+        'rndOrderColors': False,
         'numberOfColors': 5
     },
     {
@@ -23,7 +23,7 @@ ROUNDS = [
         'status': f'All cells must be the same color! 3',
         'timer': None,
         'rndCellColors': 10000, # Or False
-        'rndOrderColors': True,
-        'numberOfColors': 8
+        'rndOrderColors': False,
+        'numberOfColors': 10
     },
 ]

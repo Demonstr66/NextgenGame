@@ -20,8 +20,12 @@ class Game(Frame):
 
     def hide(self):
         self.forget()
+
     def stop(self):
         self._field.on = False
+
+    # def destroy(self):
+    #     self._field.destroy()
 
     def _initVisualElements( self ):
         self._bar = Frame( self, bg = 'grey', width = 80)
@@ -120,3 +124,7 @@ class GameField(Frame):
 
         if win:
             self.event_generate('<<Game_win>>')
+    def destroy(self):
+        for i in range( self._row ):
+            for j in range( self._col ):
+                self._btns[i][j].destroy()
