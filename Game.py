@@ -20,9 +20,13 @@ class Game(Frame):
 
     def hide(self):
         self.forget()
-
+    def stop(self):
+        self._field.on = False
 
     def _initVisualElements( self ):
+        self._bar = Frame( self, bg = 'grey', width = 80)
+        self._bar.pack(side = 'left', fill = 'y')
+
         self._status = Label(
             self,
             text = self._status,
@@ -33,8 +37,6 @@ class Game(Frame):
         )
         self._status.pack( fill = 'x' )
 
-        self._bar = Frame( self, bg = 'grey', width = 80)
-        self._bar.pack(side = 'left', fill = 'y')
         self._field = GameField(
             self,
             self._row,
@@ -69,6 +71,7 @@ class GameField(Frame):
         self._rndOrder = rndOrder
         self._model = self._modelInit()
         self._btns = self._createBtns()
+        self.on = True
 
     def show(self):
         self.pack()
@@ -93,12 +96,27 @@ class GameField(Frame):
                 cell.grid( row = i, column = j, sticky = 'nsew' )
                 cell.bind(
                     '<Button-1>',
-                    self.click(cell, i, j)
+                    self._click(cell, i, j)
                 )
                 field[i].append( cell )
         return field
 
-    def click(self, c, i, j):
+    def _click(self, c, i, j):
         def r(s):
-            self._model[i][j] = c.next()
+            if self.on:
+                self._model[i][j] = c.next()
+                self._check()
+            else:
+                c['state'] = DISABLED
         return r
+
+    def _check(self):
+        sample = self._model[0][0]
+        win = True
+        for i in range( self._row ):
+            for j in range( self._col ):
+                if self._model[i][j] != sample:
+                    win = False
+
+        if win:
+            self.event_generate('<<Game_win>>')

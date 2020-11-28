@@ -17,6 +17,10 @@ class MainMenu(Frame):
         )
         self._title.pack()
         self._startBtn = MenuButton(self, text = "Start")
+        self._startBtn.bind(
+            '<Button-1>',
+            lambda e: self.event_generate('<<Start-Click>>')
+        )
         self._levelsBtn = MenuButton(self, text = "Levels")
 
     def show(self):

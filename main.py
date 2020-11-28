@@ -8,11 +8,26 @@ from MainMenu import *
 
 root.title("NextgenTetris")
 
-app = Game( root, round = 2 )
-menu = MainMenu( root )
+menu = None
+game = None
+dialog = None
 
+menu = MainMenu( root )
 menu.show()
-app.show()
+
+
+def onStartGame(e):
+    global game
+    menu.hide()
+    game = Game( root, round = 1)
+    game.show()
+
+def onGameWin(e):
+    game.stop()
+
+
+root.bind('<<Start-Click>>', onStartGame )
+root.bind('<<Game_win>>', onGameWin)
 
 root.resizable(0, 0)
 
